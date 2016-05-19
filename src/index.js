@@ -1,12 +1,13 @@
+// Comments written for JSDOC but it does not support es7 syntax.  Will 
+// address in the near future.
 
 const W_TYPE = Symbol('WRITE_POINTER');
 const WS_TYPE = Symbol('WRITE_POINTER_SAFE');
 
 
 /** 
- * @desc A class to handle autonumber write pointers 
+ * A class to handle autonumber write pointers 
  * for data stores using a lazy delete format.
- * @memberof (WritePointerModule)
  */
 class WritePointer {
 
@@ -23,8 +24,7 @@ class WritePointer {
 	}
 
 	/** 
-	 * @returns the next available write index
-	 * @memberof WritePointer
+	 * @return { int } the next available write index
 	 */
 	next = () => 
 			( this._nextOpen === -1 ) 
@@ -33,13 +33,12 @@ class WritePointer {
 	
 
 	/** 
-	 * @desc delets the item with the id by 
+	 * deletes the item with the id by 
 	 * placing the id in the next available pool
 	 * and allowing a new record to be created at the 
 	 * site of the old one.
 	 * @param { uint } id
-	 * @returns { boolean } true is something deleted, false if not.
-	 * @memberof WritePointer
+	 * @return { boolean } true is something deleted, false if not.
 	 */
 	delete = (id) => {
 		this._assertId(id);
@@ -50,11 +49,10 @@ class WritePointer {
 	}
 
 	/** 
-	 * @desc returns true if there is a record in use with the given id
+	 * returns true if there is a record in use with the given id
 	 * or false if not 
 	 * @param { uint } id to be checked
-	 * @returns { boolean } true if in use, false if not.
-	 * @memberof WritePointer
+	 * @return { boolean } true if in use, false if not.
 	 */
 	inUse = (id) => 
 		(	this._assertId(id) 
@@ -65,8 +63,7 @@ class WritePointer {
 		(inUse === true) ? this._next - this._open.length : this._next;
 
 	/** 
-	 * @desc placeholder for the same function in WritePointerSafe
-	 * @memberof WritePointer
+	 * placeholder for the same function in WritePointerSafe
 	 */
 	_assertId = (id) => true;
 } 
@@ -76,11 +73,10 @@ class WritePointer {
  * for data stores using a lazy delete format.  Unlike
  * WritePointer class, this one will check to see if 
  * id is passed in as a valid type
- * @memberof WritePointerModule
  */
 class WritePointerSafe extends WritePointer { 
 
-	TYPE = WS_TYPE;
+	// TYPE = WS_TYPE;
 
 	constructor(name = 'WritePointerSafe') { super(name) }
 
@@ -101,9 +97,7 @@ class WritePointerSafe extends WritePointer {
 
 	
 /** 
- * @function writePointerAttach
- * @desc will attach writePointer methods to the api of a class 
- * @memberof(WritePointerModule)
+ * will attach writePointer methods to the api of a class 
  */
 const writePointerAttachAsMixin = (writePointer, target) => { 
 	if (writePointer.BASE_TYPE !== W_TYPE ) throw new Error('Invalid Write Pointer');
