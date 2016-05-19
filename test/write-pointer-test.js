@@ -1,14 +1,9 @@
-
-
 import 'mocha';
 import { expect } from 'chai';
 
-import { WritePointer, WritePointerSafe, writePointerAttach } 
-				from '../src/index';
 
-
-
-const test = (WritePointer, isWritePointerSafe, isSource) => { 
+const test = 
+	(WritePointer, isWritePointerSafe, writePointerAttachAsMixin, isSource) => {
 
 	const className = isWritePointerSafe ? 'WritePointerSafe' : 'WritePointer';
 	const sourceOrLib = isSource ? 'source' : 'lib';
@@ -74,11 +69,40 @@ const test = (WritePointer, isWritePointerSafe, isSource) => {
 		}
 	);
 
+	describe(`${className} version ${sourceOrLib} writePointerAttachAsMixin`,
+		() => { 
+
+			class SomeClass {
+				constructor() { 
+					const writePointer = new WritePointer('index');
+					writePointerAttachAsMixin(writePointer, this);
+				}
+			}
+
+			const someClass = new SomeClass();
+
+			it('should be able to call next ', () => { 
+				expect(someClass.next_index()).to.equal(0);
+				expect(someClass.next_index()).to.equal(1);
+			});
+
+			it('should be able to call inUse', () => { 
+				expect(someClass.index_inUse(0)).to.equal(true);
+			});
+
+			it('should be able to call delete', () => { 
+				expect(someClass.delete_index(0)).to.equal(true);
+				expect(someClass.delete_index(0)).to.equal(false);
+			})
+		}
+	);
+
+
 	if (isWritePointerSafe === false) return;
 
 	describe(`WritePointerSafe: ${sourceOrLib} version validations`,
 	() => { 
-		var writePointer = new WritePointerSafe();
+		var writePointer = new WritePointer();
 		Array.from(new Array(5).keys()).map( () => writePointer.next());
 
 		it('should throw errors when trying to delete with wrong datatype id ', 
@@ -113,6 +137,8 @@ const test = (WritePointer, isWritePointerSafe, isSource) => {
 		
 	}
 );
+
+
 
 }
 

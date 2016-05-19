@@ -13,7 +13,8 @@ class WritePointer {
 	BASE_TYPE = W_TYPE
 	TYPE = W_TYPE;
 
-	constructor(name) { 
+	constructor(name = 'WritePointer') { 
+		this.name = name.replace(' ', '');
 		this._next = 0;
 		this._nextOpen = -1;
 		this._open = [];
@@ -81,7 +82,7 @@ class WritePointerSafe extends WritePointer {
 
 	TYPE = WS_TYPE;
 
-	constructor(name) { super(name) }
+	constructor(name = 'WritePointerSafe') { super(name) }
 
 	/** 
 	 * @desc checks to see if an id is an unsigned integer
@@ -104,7 +105,7 @@ class WritePointerSafe extends WritePointer {
  * @desc will attach writePointer methods to the api of a class 
  * @memberof(WritePointerModule)
  */
-const writePointerAttach = (writePointer, target) => { 
+const writePointerAttachAsMixin = (writePointer, target) => { 
 	if (writePointer.BASE_TYPE !== W_TYPE ) throw new Error('Invalid Write Pointer');
 	if (typeof(target) !== 'object') { 
 		throw new Error('Invalid Target for Write Pointer Attach')
@@ -112,8 +113,9 @@ const writePointerAttach = (writePointer, target) => {
 
 	const name = writePointer.name;
 	target[`next_${name}`] = () => writePointer.next();
-	target[`delete_${name}`] = (id) => writePointer(id);
-	target[`${name}_inUse`] = (id) => writePointer(inUse(id));
+	target[`delete_${name}`] = (id) => writePointer.delete(id);
+	target[`${name}_inUse`] = (id) => writePointer.inUse(id);
+	target[`${name}_count`] = (inUse = true) => writePointer.count(inUse);
 } 
 
-export { WritePointer, WritePointerSafe, writePointerAttach }
+export { WritePointer, WritePointerSafe, writePointerAttachAsMixin }

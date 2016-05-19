@@ -1,10 +1,10 @@
 
 import test from './write-pointer-test';
 
-import { WritePointer, WritePointerSafe, writePointerAttach } 
+import { WritePointer, WritePointerSafe, writePointerAttachAsMixin } 
 				from '../src/index';
 
-test(WritePointer, false, true);
-test(WritePointerSafe, true, true);
+test(WritePointer, false, writePointerAttachAsMixin, true);
+test(WritePointerSafe, true, writePointerAttachAsMixin, true);
 
 
