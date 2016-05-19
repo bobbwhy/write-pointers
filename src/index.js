@@ -1,3 +1,6 @@
+import Bunyan from 'bunyan';
+var log = Bunyan.createLogger({name:"WritePointer"});
+
 // Comments written for JSDOC but it does not support es7 syntax.  Will 
 // address in the near future.
 
@@ -14,8 +17,14 @@ class WritePointer {
 	BASE_TYPE = W_TYPE
 	TYPE = W_TYPE;
 
-	constructor(name = 'WritePointer') { 
-		this.name = name.replace(' ', '');
+	constructor(name = 'anonymousWritePointer') { 
+		// ensures that this name will not pollute an api with invalid function name
+		const validName = /^[$A-Z_][0-9A-Z_$]*$/i;
+		if (validName.test(name) === false || typeof(name) === 'boolean') { 
+			throw new Error('Invalid Instance Name for WritePointer');
+		}
+
+		this.name = name;
 		this._next = 0;
 		this._nextOpen = -1;
 		this._open = [];
@@ -97,19 +106,32 @@ class WritePointerSafe extends WritePointer {
 
 	
 /** 
- * will attach writePointer methods to the api of a class 
+ * will attach writePointer methods to the api of a class. 
+ * the writePointer commands are proxied as [writePointer.name + commandName]
+ * @param { WritePointer } writePointer 
+ * @param { object } target
+ * @param { boolean } camelCase if true then names are appended as camelcase
+ * else as underscores separators between the name of the writePointer 
+ * and the command name.  ie. next becomes nextName or next_name depending upon 
+ * this setting
  */
-const writePointerAttachAsMixin = (writePointer, target) => { 
+const writePointerAttachAsMixin = (writePointer, target, camelCase = true) => { 
 	if (writePointer.BASE_TYPE !== W_TYPE ) throw new Error('Invalid Write Pointer');
 	if (typeof(target) !== 'object') { 
 		throw new Error('Invalid Target for Write Pointer Attach')
 	}
 
 	const name = writePointer.name;
-	target[`next_${name}`] = () => writePointer.next();
-	target[`delete_${name}`] = (id) => writePointer.delete(id);
-	target[`${name}_inUse`] = (id) => writePointer.inUse(id);
-	target[`${name}_count`] = (inUse = true) => writePointer.count(inUse);
+	const commandName
+		= (camelCase === true) 
+			? (cmd) => `${name}${cmd.slice(0,1).toUpperCase()}${cmd.slice(1)}`
+			: (cmd) => `${name}_${cmd}`;
+
+	target[commandName('next')] 	= () 							=> writePointer.next();
+	target[commandName('inUse')] 	= (id)						=> writePointer.inUse(id);
+	target[commandName('delete')] = (id) 						=> writePointer.delete(id);
+	target[commandName('count')] 	= (inUse = true) 	=> writePointer.count(inUse);
+		
 } 
 
 export { WritePointer, WritePointerSafe, writePointerAttachAsMixin }

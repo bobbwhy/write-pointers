@@ -12,10 +12,30 @@ const test =
 		() => { 
 			var writePointer = new WritePointer();
 
+			it('should throw an Error when instantiating with a bad function name',
+				() => { 
+					expect( () => new WritePointer(23))
+						.to.throw('Invalid Instance Name for WritePointer');
+					expect( () => new WritePointer({}))
+						.to.throw('Invalid Instance Name for WritePointer');
+					expect( () => new WritePointer([]))
+						.to.throw('Invalid Instance Name for WritePointer');
+					expect( () => new WritePointer("-something"))
+						.to.throw('Invalid Instance Name for WritePointer');
+					expect( () => new WritePointer("+else"))
+						.to.throw('Invalid Instance Name for WritePointer');
+					expect( () => new WritePointer(true))
+						.to.throw('Invalid Instance Name for WritePointer');
+					expect( () => new WritePointer("index"))
+						.to.not.throw('Invalid Instance Name for WritePointer');
+
+				}
+			)
+
 			it('should return a range from 0, 10', 
 				() => { 
 
-					const testRange = Array.from(new Array(10).keys());
+					const testRange  = Array.from(new Array(10).keys());
 					const pointedIds = testRange.map((i) => writePointer.next());
 					expect(pointedIds).to.deep.equal(testRange);
 			});
@@ -69,7 +89,54 @@ const test =
 		}
 	);
 
-	describe(`${className} version ${sourceOrLib} writePointerAttachAsMixin`,
+	describe(`${className} version ${sourceOrLib} writePointerAttachAsMixin` 
+	 	+ 'using underscore notation',
+		() => { 
+
+			class SomeClass {
+				constructor() { 
+					const writePointer = new WritePointer('index');
+					writePointerAttachAsMixin(writePointer, this, false);
+				}
+			}
+
+			const someClass = new SomeClass();
+
+			it('should be able to call next ', () => { 
+				expect(someClass.index_next()).to.equal(0);
+				expect(someClass.index_next()).to.equal(1);
+				expect(someClass.index_next()).to.equal(2);
+			});
+
+			it('should show a inUse count value of 2', () => { 
+				expect(someClass.index_count()).to.equal(3);
+			});
+
+			it('should be able to call inUse', () => { 
+				expect(someClass.index_inUse(0)).to.equal(true);
+			});
+
+			it('should show an count with inUse = false of 3', () => { 
+				expect(someClass.index_count(false)).to.equal(3);
+			});
+
+			it('should be able to call delete', () => { 
+				expect(someClass.index_delete(0)).to.equal(true);
+				expect(someClass.index_delete(0)).to.equal(false);
+			});
+
+			it('should show an count with inUse = true of 2', () => { 
+				expect(someClass.index_count()).to.equal(2);
+			});
+
+			it('should show an count with inUse = false of 3', () => { 
+				expect(someClass.index_count(false)).to.equal(3);
+			});
+		}
+	);
+
+	describe(`${className} version ${sourceOrLib} writePointerAttachAsMixin` 
+	 	+ 'using camelCase notation',
 		() => { 
 
 			class SomeClass {
@@ -82,18 +149,36 @@ const test =
 			const someClass = new SomeClass();
 
 			it('should be able to call next ', () => { 
-				expect(someClass.next_index()).to.equal(0);
-				expect(someClass.next_index()).to.equal(1);
+				expect(someClass.indexNext()).to.equal(0);
+				expect(someClass.indexNext()).to.equal(1);
+				expect(someClass.indexNext()).to.equal(2);
+			});
+
+			it('should show a inUse count value of 2', () => { 
+				expect(someClass.indexCount()).to.equal(3);
 			});
 
 			it('should be able to call inUse', () => { 
-				expect(someClass.index_inUse(0)).to.equal(true);
+				expect(someClass.indexInUse(0)).to.equal(true);
+			});
+
+			it('should show an count with inUse = false of 3', () => { 
+				expect(someClass.indexCount(false)).to.equal(3);
 			});
 
 			it('should be able to call delete', () => { 
-				expect(someClass.delete_index(0)).to.equal(true);
-				expect(someClass.delete_index(0)).to.equal(false);
-			})
+				expect(someClass.indexDelete(0)).to.equal(true);
+				expect(someClass.indexDelete(0)).to.equal(false);
+			});
+
+			it('should show an count with inUse = true of 2', () => { 
+				expect(someClass.indexCount()).to.equal(2);
+			});
+
+			it('should show an count with inUse = false of 3', () => { 
+				expect(someClass.indexCount(false)).to.equal(3);
+			});
+
 		}
 	);
 
