@@ -8,6 +8,12 @@ WritePointers contains two classes.  **WritePointer** and **WritePointerSafe**. 
 
 WritePointers also contains a function ( writePointerAttachAsMixin) to attach a WritePointer or WritePointerSafe instance as a mixin to another class or object.
 
+### Commands: 
+**next:** gets the next available id  
+**inUse:** checks to see if an id is in use   
+**delete:** deletes an id from the system and makes it available for the next function for reuse  
+**count:** checks to see how many ids are in use OR the number of ids in use + those that have been deleted.
+
 ### Usage 
 
 #### Instantiation: 
@@ -41,6 +47,36 @@ let count = writePointer.count();
 let count = writePointer.count(false);
 ```
 
+### Use as a Mixin
+**writePointerAttachAsMixin** function will attach the four api commands to a parent or target class as public function proxy calls to the writePointer instance.  The functions will appear on the parent class.  By default, camelCase will be used, but underscore notation is also possible.
+
+**To use with CamelCase:**
+
+```
+const writePointer = new WritePointer('index');
+class targetClass {}
+writePointerAttachAsMixin(writePointer, targetClass, <camelCase> = true);
+/* 
+	writePointer.next  .... targetClass.indexNext;
+	writePointer.delete  .... targetClass.indexDelete;
+	writePointer.inUse  .... targetClass.indexInUse;
+	writePointer.count  .... targetClass.indexCount;
+*/
+```
+
+**To use with underscore:**
+
+```
+const writePointer = new WritePointer('index');
+class targetClass {}
+writePointerAttachAsMixin(writePointer, targetClass, false);
+/* 
+	writePointer.next  .... targetClass.index_next;
+	writePointer.delete  .... targetClass.index_delete;
+	writePointer.inUse  .... targetClass.index_inUse;
+	writePointer.count  .... targetClass.index_count;
+*/
+```
 
 
 
