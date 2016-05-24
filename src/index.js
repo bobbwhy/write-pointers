@@ -17,30 +17,30 @@ class WritePointer {
 	BASE_TYPE = W_TYPE
 	TYPE = W_TYPE;
 
-	constructor(name = 'anonymousWritePointer') { 
+	constructor(name = 'anonymousWritePointer', startAt = 0) { 
 		// ensures that this name will not pollute an api with invalid function name
 		const validName = /^[$A-Z_][0-9A-Z_$]*$/i;
 		if (validName.test(name) === false || typeof(name) === 'boolean') { 
 			throw new Error('Invalid Instance Name for WritePointer');
 		}
 
-		this.name = name;
-		this._next = 0;
-		this._nextOpen = -1;
-		this._open = [];
-		this._deleted = {};
-		this._mode = 0;
+		this.name 			= name;
+		this._start 		= startAt;
+		this._next 			= startAt;
+		this._nextOpen 	= -1;
+		this._open 			= [];
+		this._deleted 	= {};
+		this._mode 			= 0;
+
 	}
 
 	/** 
 	 * @return { int } the next available write index
 	 */
-	next = () => 
-			( this._nextOpen === -1 ) 
-				? this._next++ 
-				: this._open[this._nextOpen--];
+	next = () => ( this._nextOpen === -1 ) 
+								? this._next++
+								: this._open[this._nextOpen--];
 	
-
 	/** 
 	 * deletes the item with the id by 
 	 * placing the id in the next available pool
@@ -69,7 +69,10 @@ class WritePointer {
 			&& id < this._next)
 
 	count = (inUse = true) => 
-		(inUse === true) ? this._next - this._open.length : this._next;
+									( ( inUse === true ) 
+										? this._next - this._open.length 
+										: this._next ) 
+										- this._start;
 
 	/** 
 	 * placeholder for the same function in WritePointerSafe
@@ -87,7 +90,9 @@ class WritePointerSafe extends WritePointer {
 
 	// TYPE = WS_TYPE;
 
-	constructor(name = 'WritePointerSafe') { super(name) }
+	constructor(name = 'WritePointerSafe', startAt = 0) { 
+		super(name, startAt) 
+	}
 
 	/** 
 	 * @desc checks to see if an id is an unsigned integer
@@ -96,7 +101,10 @@ class WritePointerSafe extends WritePointer {
 	 * @returns {boolean } true if valid.
 	 */
 	_assertId = (id) => { 
-		if(typeof(id) !== 'number' || Math.floor(id) !== id || id < 0) { 
+		if(typeof(id) !== 'number' 
+				|| Math.floor(id) !== id 
+				|| id < this._start) {
+
 			throw new Error('Invalid Id');
 		}
 

@@ -20,7 +20,9 @@ WritePointers also contains a function ( writePointerAttachAsMixin) to attach a 
 ``` 
 import { WritePointer } from 'write-pointers';
 writePointer = new WritePointer('dataPointers');
-// or
+// or to start the index at a specific value: 
+writePointer = new WritePointer('dataPointers', 20);
+// or to do the same things with id validation.
 import { WritePointerSafe } from 'write-pointers';
 writePointer = new WritePointerSafe('dataPointersSafe');
 ```

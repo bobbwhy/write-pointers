@@ -34,7 +34,6 @@ const test =
 
 			it('should return a range from 0, 10', 
 				() => { 
-
 					const testRange  = Array.from(new Array(10).keys());
 					const pointedIds = testRange.map((i) => writePointer.next());
 					expect(pointedIds).to.deep.equal(testRange);
@@ -81,10 +80,37 @@ const test =
 
 			it('Should return false when trying to delete an item that has not'
 				+ ' been created',
-				() => { 
+				() => {
+					
 					expect(writePointer.delete(20)).to.equal(false);
 				}
-			)
+			);
+
+		}
+	);
+
+	describe(`${className} version ${sourceOrLib} with startAt index`, 
+		() => { 
+			var writePointer = new WritePointer('index', 10);
+			
+			it('should return a range from 10, 19', 
+				() => { 
+					const testRange  = Array.from(new Array(10).keys())
+														.map((item) => item + 10);
+					const pointedIds = testRange.map((i) => writePointer.next());
+					expect(pointedIds).to.deep.equal(testRange);
+			});
+
+			it('should return a count of 10', 
+				() => { 
+					expect(writePointer.count()).to.equal(10);
+			});
+
+			it('should delete 1 and show a count of 9', 
+				() => { 
+					writePointer.delete(12);
+					expect(writePointer.count()).to.equal(9);
+			})
 
 		}
 	);
@@ -222,12 +248,6 @@ const test =
 		
 	}
 );
-
-
-
 }
 
 export { test as default };
-
-// test(WritePointer, false);
-// test(WritePointerSafe, true);
