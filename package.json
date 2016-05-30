@@ -1,6 +1,6 @@
 {
   "name": "write-pointers",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "description": "A simple class to manage indices to a data store with an autonumber indexing system and a lazy erase algorithm",
   "main": "lib/index.js",
   "scripts": {

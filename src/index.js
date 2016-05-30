@@ -54,7 +54,7 @@ class WritePointer {
 		if (id > this._next || this._open.indexOf(id) !== -1) return false;
 
 		this._open[++this._nextOpen] = id;
-		return true;
+		return id;
 	}
 
 	/** 

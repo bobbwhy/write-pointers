@@ -47,11 +47,11 @@ const test =
 			})
 
 			it('Should delete items 2, 3, 7 and get those values in next statements'
-					+ ' and all delete statements will return true',
+					+ ' and all delete statements will return the id that was deleted.',
 				() => { 
-					expect(writePointer.delete(2)).to.equal(true);
-					expect(writePointer.delete(3)).to.equal(true);
-					expect(writePointer.delete(7)).to.equal(true);
+					expect(writePointer.delete(2)).to.equal(2);
+					expect(writePointer.delete(3)).to.equal(3);
+					expect(writePointer.delete(7)).to.equal(7);
 					const testRange = [7, 3, 2];
 					const pointedIds = testRange.map( () => writePointer.next());
 					expect(pointedIds).to.deep.equal(testRange);
@@ -147,7 +147,7 @@ const test =
 			});
 
 			it('should be able to call delete', () => { 
-				expect(someClass.index_delete(0)).to.equal(true);
+				expect(someClass.index_delete(0)).to.equal(0);
 				expect(someClass.index_delete(0)).to.equal(false);
 			});
 
@@ -193,7 +193,7 @@ const test =
 			});
 
 			it('should be able to call delete', () => { 
-				expect(someClass.indexDelete(0)).to.equal(true);
+				expect(someClass.indexDelete(0)).to.equal(0);
 				expect(someClass.indexDelete(0)).to.equal(false);
 			});
 
@@ -228,7 +228,7 @@ const test =
 
 		it('should not throw an error when deleting', 
 			() => { 
-				expect(writePointer.delete(2)).to.equal(true)
+				expect(writePointer.delete(2)).to.equal(2);
 		})
 
 		it('should return false when deleting a non existent id', 

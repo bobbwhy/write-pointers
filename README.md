@@ -32,7 +32,8 @@ writePointer = new WritePointerSafe('dataPointersSafe');
 
 #### Delete an in-use Write Id: 
 ``` 
-// returns true if an in-use record was deleted, false if no record to be deleted 
+// returns the id that was deleted if an in-use record was deleted, 
+// OR false if no record to be deleted 
 let didThisDelete = writePointer.delete() 
 ```
 
