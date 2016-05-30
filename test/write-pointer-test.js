@@ -67,7 +67,7 @@ const test =
 			it('Should return false when trying to delete an item that has already'
 					+ ' been deleted',
 					() => { 
-						expect(writePointer.delete(2)).to.equal(false);
+						expect(writePointer.delete(2)).to.equal(-1);
 				}
 			);
 
@@ -82,7 +82,7 @@ const test =
 				+ ' been created',
 				() => {
 					
-					expect(writePointer.delete(20)).to.equal(false);
+					expect(writePointer.delete(20)).to.equal(-1);
 				}
 			);
 
@@ -148,7 +148,7 @@ const test =
 
 			it('should be able to call delete', () => { 
 				expect(someClass.index_delete(0)).to.equal(0);
-				expect(someClass.index_delete(0)).to.equal(false);
+				expect(someClass.index_delete(0)).to.equal(-1);
 			});
 
 			it('should show an count with inUse = true of 2', () => { 
@@ -194,7 +194,7 @@ const test =
 
 			it('should be able to call delete', () => { 
 				expect(someClass.indexDelete(0)).to.equal(0);
-				expect(someClass.indexDelete(0)).to.equal(false);
+				expect(someClass.indexDelete(0)).to.equal(-1);
 			});
 
 			it('should show an count with inUse = true of 2', () => { 
@@ -233,7 +233,7 @@ const test =
 
 		it('should return false when deleting a non existent id', 
 			() => { 
-				expect(writePointer.delete(7)).to.equal(false);
+				expect(writePointer.delete(7)).to.equal(-1);
 		})
 		
 		it('should throw errors when inUse functions called with wrong datatype id ', 

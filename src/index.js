@@ -25,7 +25,7 @@ class WritePointer {
 		}
 
 		this.name 			= name;
-		this._start 		= startAt;
+		this._start 		= startAt > 0 ? startAt : 0;
 		this._next 			= startAt;
 		this._nextOpen 	= -1;
 		this._open 			= [];
@@ -51,7 +51,7 @@ class WritePointer {
 	 */
 	delete = (id) => {
 		this._assertId(id);
-		if (id > this._next || this._open.indexOf(id) !== -1) return false;
+		if (id > this._next || this._open.indexOf(id) !== -1) return -1;
 
 		this._open[++this._nextOpen] = id;
 		return id;
