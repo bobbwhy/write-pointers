@@ -39,6 +39,14 @@ const test =
 					expect(pointedIds).to.deep.equal(testRange);
 			});
 
+			it('should return a range from 0 to 10 for the ids in use ',
+				() => { 
+					const testRange  = Array.from(new Array(10).keys());
+					const idsInUse   = writePointer.idsInUse();
+					expect(idsInUse).to.deep.equal(testRange);
+				}
+			);
+
 			it('Should show a count of the 10 items in use. ', 
 				() => { 
 					expect(writePointer.count()).to.equal(10);
@@ -62,7 +70,16 @@ const test =
 					expect(writePointer.count()).to.equal(7);
 					expect(writePointer.count(true)).to.equal(7);
 					expect(writePointer.count(false)).to.equal(10);
-			})
+			});
+
+
+			it('should show 7 ids still in use, the range 0 to 10 except 7, 3 2',
+				() => { 
+					const testRange = [0, 1, 4, 5, 6, 8, 9];
+					const idsInUse  = writePointer.idsInUse();
+					expect(idsInUse).to.deep.equal(testRange);
+				}
+			);
 
 			it('Should return false when trying to delete an item that has already'
 					+ ' been deleted',

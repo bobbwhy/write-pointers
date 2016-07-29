@@ -1,6 +1,8 @@
 import Bunyan from 'bunyan';
 var log = Bunyan.createLogger({name:"WritePointer"});
 
+import range from 'array-range';
+
 // Comments written for JSDOC but it does not support es7 syntax.  Will 
 // address in the near future.
 
@@ -40,6 +42,19 @@ class WritePointer {
 	next = () => ( this._nextOpen === -1 ) 
 								? this._next++
 								: this._open[this._nextOpen--];
+
+	/**
+	 * @function count
+	 * @description returns the number of ids in use;
+	 * @param  {Boolean} inUse [description]
+	 * @return {[type]}        [description]
+	 * @memberOf WritePointer
+	 */
+	count = (inUse = true) => 
+					( ( inUse === true ) 
+						? this._next - this._open.length 
+						: this._next ) 
+						- this._start;
 	
 	/** 
 	 * deletes the item with the id by 
@@ -48,6 +63,7 @@ class WritePointer {
 	 * site of the old one.
 	 * @param { uint } id
 	 * @return { boolean } true is something deleted, false if not.
+	 * @memberOf WritePointer
 	 */
 	delete = (id) => {
 		this._assertId(id);
@@ -59,20 +75,31 @@ class WritePointer {
 
 	/** 
 	 * returns true if there is a record in use with the given id
-	 * or false if not 
+	 * or false if not.  If id === true shows all idsInUse
 	 * @param { uint } id to be checked
 	 * @return { boolean } true if in use, false if not.
+	 * @memberOf  WritePointer
 	 */
 	inUse = (id) => 
-		(	this._assertId(id) 
-			&& this._open.indexOf(id) === -1 
-			&& id < this._next)
+		(id === true) 
+			? this.idsInUse(id)
+			: (	
+					this._assertId(id) 
+					&& this._open.indexOf(id) === -1 
+					&& id < this._next
+				);
 
-	count = (inUse = true) => 
-									( ( inUse === true ) 
-										? this._next - this._open.length 
-										: this._next ) 
-										- this._start;
+	/**
+	 * @function idsInUse 
+	 * @description returns all used Ids
+	 * @param { {boolean} inUse true if show ids in use, false if show ids 
+	 * @return {Array}
+	 * @memberOf WritePointer
+	 */
+	idsInUse = () => 
+		range(this.startAt, this._next)
+				.filter( (id) => this._open.indexOf(id) === -1 );
+
 
 	/** 
 	 * placeholder for the same function in WritePointerSafe
@@ -99,6 +126,7 @@ class WritePointerSafe extends WritePointer {
 	 * if not an error is thrown 
 	 * @param { * } id
 	 * @returns {boolean } true if valid.
+	 * @memberOf WritePointerSafe
 	 */
 	_assertId = (id) => { 
 		if(typeof(id) !== 'number' 
