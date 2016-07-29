@@ -18,6 +18,7 @@ WritePointers also contains a function ( writePointerAttachAsMixin) to attach a 
 ### Commands: 
 **next:** gets the next available id  
 **inUse:** checks to see if an id is in use   
+**idsInUse:** shows all the ids currently in use as an array.
 **delete:** deletes an id from the system and makes it available for the next function for reuse  
 **count:** checks to see how many ids are in use OR the number of ids in use + those that have been deleted.
 
@@ -41,13 +42,19 @@ writePointer = new WritePointerSafe('dataPointersSafe');
 ``` 
 // returns the id that was deleted if an in-use record was deleted, 
 // OR false if no record to be deleted 
-let didThisDelete = writePointer.delete() 
+let didThisDelete = writePointer.delete();
 ```
 
 #### Check if an Id is being used for a record: 
-``` 
-let isThisInUse = writePointer.inUse(<id>)
 ```
+// if id === true runs idsInUse command shown just below. 
+let isThisInUse = writePointer.inUse(<id>);
+```
+#### Show all the Ids in use
+```
+let idsInUse = writePointer.inUse(<id>);
+```
+
 #### How Many Records are in this system.
 ``` 
 // return the number of records that are in use.

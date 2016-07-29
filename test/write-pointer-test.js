@@ -77,7 +77,9 @@ const test =
 				() => { 
 					const testRange = [0, 1, 4, 5, 6, 8, 9];
 					const idsInUse  = writePointer.idsInUse();
+					const idsInUseFromInUse = writePointer.inUse(true);
 					expect(idsInUse).to.deep.equal(testRange);
+					expect(idsInUseFromInUse).to.deep.equal(testRange);
 				}
 			);
 
