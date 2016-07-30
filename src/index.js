@@ -1,5 +1,6 @@
-import Bunyan from 'bunyan';
-var log = Bunyan.createLogger({name:"WritePointer"});
+// uncomment to develop
+// import Bunyan from 'bunyan';
+// var log = Bunyan.createLogger({name:"WritePointer"});
 
 import range from 'array-range';
 
@@ -16,9 +17,6 @@ const WS_TYPE = Symbol('WRITE_POINTER_SAFE');
  */
 class WritePointer {
 
-	BASE_TYPE = W_TYPE
-	TYPE = W_TYPE;
-
 	constructor(name = 'anonymousWritePointer', startAt = 0) { 
 		// ensures that this name will not pollute an api with invalid function name
 		const validName = /^[$A-Z_][0-9A-Z_$]*$/i;
@@ -34,14 +32,23 @@ class WritePointer {
 		this._deleted 	= {};
 		this._mode 			= 0;
 
+		this.BASE_TYPE = W_TYPE
+		this.TYPE = W_TYPE;
+
 	}
 
 	/** 
 	 * @return { int } the next available write index
 	 */
-	next = () => ( this._nextOpen === -1 ) 
-								? this._next++
-								: this._open[this._nextOpen--];
+	next() { 
+		if (this._nextOpen === -1) return this._next++;
+
+		const { _open } = this;
+		this._open = _open.slice(1);
+		this._nextOpen--;
+
+		return _open[0];
+	}
 
 	/**
 	 * @function count
@@ -50,11 +57,13 @@ class WritePointer {
 	 * @return {[type]}        [description]
 	 * @memberOf WritePointer
 	 */
-	count = (inUse = true) => 
-					( ( inUse === true ) 
+	count(inUse = true) {
+		return ( ( inUse === true ) 
 						? this._next - this._open.length 
 						: this._next ) 
 						- this._start;
+	}
+	
 	
 	/** 
 	 * deletes the item with the id by 
@@ -65,10 +74,10 @@ class WritePointer {
 	 * @return { boolean } true is something deleted, false if not.
 	 * @memberOf WritePointer
 	 */
-	delete = (id) => {
+	delete(id) {
 		this._assertId(id);
 		if (id > this._next || this._open.indexOf(id) !== -1) return -1;
-
+		
 		this._open[++this._nextOpen] = id;
 		return id;
 	}
@@ -80,14 +89,15 @@ class WritePointer {
 	 * @return { boolean } true if in use, false if not.
 	 * @memberOf  WritePointer
 	 */
-	inUse = (id) => 
-		(id === true) 
-			? this.idsInUse(id)
-			: (	
-					this._assertId(id) 
-					&& this._open.indexOf(id) === -1 
-					&& id < this._next
-				);
+	inUse(id) { 
+		return (id === true) 
+						? this.idsInUse(id)
+						: (	
+								this._assertId(id) 
+								&& this._open.indexOf(id) === -1 
+								&& id < this._next
+							);
+	}
 
 	/**
 	 * @function idsInUse 
@@ -96,15 +106,17 @@ class WritePointer {
 	 * @return {Array}
 	 * @memberOf WritePointer
 	 */
-	idsInUse = () => 
-		range(this.startAt, this._next)
-				.filter( (id) => this._open.indexOf(id) === -1 );
+	idsInUse() { 
+		return range(this._start, this._next)
+				.filter( (id) => 
+					this._open.indexOf(id) === -1 );
+	}
 
 
 	/** 
 	 * placeholder for the same function in WritePointerSafe
 	 */
-	_assertId = (id) => true;
+	_assertId(id) { return true; }
 } 
 
 /** 
@@ -115,10 +127,11 @@ class WritePointer {
  */
 class WritePointerSafe extends WritePointer { 
 
-	// TYPE = WS_TYPE;
+	
 
 	constructor(name = 'WritePointerSafe', startAt = 0) { 
-		super(name, startAt) 
+		super(name, startAt);
+		this.TYPE = WS_TYPE;
 	}
 
 	/** 
@@ -128,7 +141,7 @@ class WritePointerSafe extends WritePointer {
 	 * @returns {boolean } true if valid.
 	 * @memberOf WritePointerSafe
 	 */
-	_assertId = (id) => { 
+	_assertId(id) { 
 		if(typeof(id) !== 'number' 
 				|| Math.floor(id) !== id 
 				|| id < this._start) {

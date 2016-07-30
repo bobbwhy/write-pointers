@@ -30,12 +30,42 @@ const test =
 						.to.not.throw('Invalid Instance Name for WritePointer');
 
 				}
-			)
+			);
+
+			it('should get a new next id of 0 and show a count of 1', 
+				() => { 
+					const i = writePointer.next();
+					const count = writePointer.count();
+					expect(i).to.equal(0);
+					expect(count).to.equal(1);
+				}
+			);
+
+			it('should delete the id of 0 and return a count of 0',
+				() => { 
+					const di = writePointer.delete(0);
+					const count = writePointer.count();
+					expect(di).to.equal(0);
+					expect(count).to.equal(0);
+				}
+			);
+
+			it('should get a new next id of 0',
+				() => { 
+					const i = writePointer.next();
+					expect(i).to.equal(0);
+				}
+			);
 
 			it('should return a range from 0, 10', 
 				() => { 
+					writePointer.delete(0);
 					const testRange  = Array.from(new Array(10).keys());
-					const pointedIds = testRange.map((i) => writePointer.next());
+					const pointedIds = testRange.map((i) => { 
+							const n = writePointer.next();
+							return n;
+						}
+					);
 					expect(pointedIds).to.deep.equal(testRange);
 			});
 
@@ -52,7 +82,7 @@ const test =
 					expect(writePointer.count()).to.equal(10);
 					expect(writePointer.count(true)).to.equal(10);
 					expect(writePointer.count(false)).to.equal(10);
-			})
+			});
 
 			it('Should delete items 2, 3, 7 and get those values in next statements'
 					+ ' and all delete statements will return the id that was deleted.',
@@ -60,18 +90,30 @@ const test =
 					expect(writePointer.delete(2)).to.equal(2);
 					expect(writePointer.delete(3)).to.equal(3);
 					expect(writePointer.delete(7)).to.equal(7);
-					const testRange = [7, 3, 2];
+					const testRange = [2, 3, 7];
 					const pointedIds = testRange.map( () => writePointer.next());
 					expect(pointedIds).to.deep.equal(testRange);
 			});
 
-			it('Should show a count of the 7 inUse items and 10 inUse and deleted. ', 
+			it('Should delete items 2, 3 and 7 again and return -1 when trying' 
+			   + ' to delete an item that has already'
+					+ ' been deleted',
+					() => { 
+						
+						writePointer.delete(2);
+						writePointer.delete(3);
+						writePointer.delete(7);
+						expect(writePointer.delete(2)).to.equal(-1);
+						expect(writePointer._open).to.deep.equal([2, 3, 7])
+				}
+			);	
+
+			it('Should show a count of the 7 inUse items and 10 inUse and deleted.', 
 				() => { 
 					expect(writePointer.count()).to.equal(7);
 					expect(writePointer.count(true)).to.equal(7);
 					expect(writePointer.count(false)).to.equal(10);
 			});
-
 
 			it('should show 7 ids still in use, the range 0 to 10 except 7, 3 2',
 				() => { 
@@ -80,13 +122,6 @@ const test =
 					const idsInUseFromInUse = writePointer.inUse(true);
 					expect(idsInUse).to.deep.equal(testRange);
 					expect(idsInUseFromInUse).to.deep.equal(testRange);
-				}
-			);
-
-			it('Should return false when trying to delete an item that has already'
-					+ ' been deleted',
-					() => { 
-						expect(writePointer.delete(2)).to.equal(-1);
 				}
 			);
 
@@ -104,7 +139,6 @@ const test =
 					expect(writePointer.delete(20)).to.equal(-1);
 				}
 			);
-
 		}
 	);
 

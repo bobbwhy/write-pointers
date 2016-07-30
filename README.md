@@ -3,6 +3,12 @@ This module is intended to provide write pointer autonumber indices for use in a
 When a record is deleted, the index of the deleted record is recovered and re-used for the next available new record.
 
 * * * * * 
+## NOTE: Version 1.2.0 fixed multiple delete bug.
+**You should obviate all earlier versions.**
+
+* * * * * 
+
+* * * * * 
 ## NOTE: Version 1.0.0 small change to delete function return value.
 **In version 1.0.0, a delete command will return the id that was deleted OR  -1 if no record can be found to be deleted.**  
 **In version 0.5.x, the return values were true or false.** 
